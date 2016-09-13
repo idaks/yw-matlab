@@ -1,0 +1,3 @@
+[submodule "yw-matlab"]
+	path = yw-matlab
+	url = https://github.com/yesworkflow-org/yw-matlab
