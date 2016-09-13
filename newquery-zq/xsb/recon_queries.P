@@ -1,0 +1,48 @@
+
+% RQ1: What input files were used to compose the rain matrix?
+:- table rq1/1.
+rq1(InputFile) :-
+    data(D1, 'Rain_Matrix', _),
+    data_upstream(D2, D1),
+    data_resource(D2, R2),
+    channel(C2, D2),
+    inflow_connects_to_channel(_, C2),
+    resource(R2, InputFile).
+
+% RQ2: How many input files were used to compose the air temperature matrix?
+:- table rq2/1.
+rq2(InputCount) :-
+    count(tair_input_file_resources(_), InputCount).
+    
+:- table tair_input_file_resources/1.
+tair_input_file_resources(R2) :-
+    data(D1, 'Tair_Matrix', _),
+    data_upstream(D2, D1),
+    data_resource(D2, R2),
+    channel(C2, D2),
+    inflow_connects_to_channel(_, C2).
+
+% RQ3: What input files provided the data used to derive the workflow output Grass_fraction_data?
+:- table rq3/1.
+rq3(InputFile) :-
+    data(D1, 'Grass_fraction_data', _),
+    data_upstream(D2, D1),
+    data_resource(D2, R2),
+    channel(C2, D2),
+    inflow_connects_to_channel(_, C2),
+    resource(R2, InputFile).
+
+% RQ4: What is the range of years over which the data in the mean_precip input files were collected?
+:- table rq4/2.
+rq4(StartYear, EndYear) :-
+    data(D, 'mean_precip', _),
+    data_resource(D, R),
+    read_resource_metadata(R, 'start_year', StartYear),
+    read_resource_metadata(R, 'end_year', EndYear).
+
+% RQ5: WWat months of the year do the mean_airtemp input files correspond to?'
+:- table rq5/1.
+rq5(Month) :-
+    data(D, 'mean_airtemp', _),
+    data_resource(D, R),
+    read_resource_metadata(R, 'month', Month).
