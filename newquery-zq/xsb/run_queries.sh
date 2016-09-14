@@ -1,6 +1,6 @@
 #!/usr/bin/env bash -l
 #
-./run_queries.sh &> run_queries.txt
+#./run_queries.sh &> run_queries.txt
 
 xsb << END_XSB_STDIN
 
