@@ -5,9 +5,9 @@
 xsb << END_XSB_STDIN
 
 [rules].
-[extractfacts].
-[modelfacts].
-[reconfacts].
+['facts/yw_extract_facts'].
+['facts/yw_model_facts'].
+['facts/reconfacts'].
 [extract_queries].
 [model_queries].
 [recon_queries].
