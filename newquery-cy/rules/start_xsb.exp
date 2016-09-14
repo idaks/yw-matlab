@@ -1,0 +1,22 @@
+#!/usr/bin/env expect
+
+spawn xsb --nobanner --nofeedback
+
+expect "| ?- "
+
+send {['./facts/nw_facts'].}
+send \n
+send {[yw_views].}
+send \n
+send {['general_rules'].}
+send \n
+send {['yw_rules'].}
+send \n
+send {['../../graphs/gv_rules'].}
+send \n
+send {['../../graphs/yw_graph_rules'].}
+send \n
+
+expect "| ?- "
+
+interact
