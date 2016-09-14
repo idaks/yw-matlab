@@ -26,13 +26,13 @@ has_subprogram(1, 8).
 has_subprogram(1, 9).
 
 % FACT: port(port_id, port_type, port_name, qualified_port_name, port_annotation_id, data_id).
-port(1, 'in', 'mstmip_SYNMAP_NA_QD.nc', 'C3_C4_map_present_NA<-mstmip_SYNMAP_NA_QD.nc', 2, 1).
+port(1, 'in', 'SYNMAP_land_cover_map_data', 'C3_C4_map_present_NA<-SYNMAP_land_cover_map_data', 2, 1).
 port(2, 'in', 'mean_airtemp', 'C3_C4_map_present_NA<-mean_airtemp', 4, 2).
 port(3, 'in', 'mean_precip', 'C3_C4_map_present_NA<-mean_precip', 6, 3).
 port(4, 'out', 'C3_fraction_data', 'C3_C4_map_present_NA->C3_fraction_data', 8, 4).
 port(5, 'out', 'C4_fraction_data', 'C3_C4_map_present_NA->C4_fraction_data', 10, 5).
 port(6, 'out', 'Grass_fraction_data', 'C3_C4_map_present_NA->Grass_fraction_data', 12, 6).
-port(7, 'in', 'mstmip_SYNMAP_NA_QD.nc', 'C3_C4_map_present_NA.fetch_SYNMAP_land_cover_map_variable<-mstmip_SYNMAP_NA_QD.nc', 15, 7).
+port(7, 'in', 'SYNMAP_land_cover_map_data', 'C3_C4_map_present_NA.fetch_SYNMAP_land_cover_map_variable<-SYNMAP_land_cover_map_data', 15, 7).
 port(8, 'out', 'lon', 'C3_C4_map_present_NA.fetch_SYNMAP_land_cover_map_variable->lon', 17, 8).
 port(9, 'out', 'lat', 'C3_C4_map_present_NA.fetch_SYNMAP_land_cover_map_variable->lat', 19, 9).
 port(10, 'out', 'lon_bnds', 'C3_C4_map_present_NA.fetch_SYNMAP_land_cover_map_variable->lon_bnds', 21, 10).
@@ -66,8 +66,6 @@ port(37, 'in', 'Grass_variable', 'C3_C4_map_present_NA.generate_netcdf_file_for_
 port(38, 'out', 'Grass_fraction_data', 'C3_C4_map_present_NA.generate_netcdf_file_for_Grass_fraction->Grass_fraction_data', 76, 21).
 
 % FACT: port_alias(port_id, alias).
-port_alias(1, 'SYNMAP_land_cover_map_data').
-port_alias(7, 'SYNMAP_land_cover_map_data').
 port_alias(8, 'lon_variable').
 port_alias(9, 'lat_variable').
 port_alias(10, 'lon_bnds_variable').
@@ -81,16 +79,18 @@ port_alias(19, 'C3_Data').
 port_alias(20, 'C4_Data').
 
 % FACT: port_uri_template(port_id, uri).
-port_uri_template(2, 'file:c3c4input/monthly/2000-2010/air.2m_monthly_2000_2010.mean.{month}.nc').
-port_uri_template(3, 'file:c3c4input/monthly/2000-2010/apcp_monthly_2000_2010_mean.{month}.nc').
-port_uri_template(4, 'file:mstmip_SYNMAP_PRESENTVEG_C3Grass_RelaFrac_NA_v2.0.nc').
-port_uri_template(5, 'file:mstmip_SYNMAP_PRESENTVEG_C4Grass_RelaFrac_NA_v2.0.nc').
-port_uri_template(6, 'file:mstmip_SYNMAP_PRESENTVEG_Grass_Fraction_NA_v2.0.nc').
-port_uri_template(12, 'file:c3c4input/monthly/2000-2010/air.2m_monthly_2000_2010.mean.{month}.nc').
-port_uri_template(14, 'file:c3c4input/monthly/2000-2010/apcp_monthly_2000_2010_mean.{month}.nc').
-port_uri_template(26, 'file:mstmip_SYNMAP_PRESENTVEG_C3Grass_RelaFrac_NA_v2.0.nc').
-port_uri_template(32, 'file:mstmip_SYNMAP_PRESENTVEG_C4Grass_RelaFrac_NA_v2.0.nc').
-port_uri_template(38, 'file:mstmip_SYNMAP_PRESENTVEG_Grass_Fraction_NA_v2.0.nc').
+port_uri_template(1, 'inputs/land_cover/SYNMAP_NA_QD.nc').
+port_uri_template(2, 'file:inputs/narr_air.2m_monthly/air.2m_monthly_{start_year}_{end_year}_mean.{month}.nc').
+port_uri_template(3, 'file:inputs/narr_apcp_rescaled_monthly/apcp_monthly_{start_year}_{end_year}_mean.{month}.nc').
+port_uri_template(4, 'file:outputs/SYNMAP_PRESENTVEG_C3Grass_RelaFrac_NA_v2.0.nc').
+port_uri_template(5, 'file:outputs/SYNMAP_PRESENTVEG_C4Grass_RelaFrac_NA_v2.0.nc').
+port_uri_template(6, 'file:outputs/SYNMAP_PRESENTVEG_Grass_Fraction_NA_v2.0.nc').
+port_uri_template(7, 'inputs/land_cover/SYNMAP_NA_QD.nc').
+port_uri_template(12, 'file:inputs/narr_air.2m_monthly/air.2m_monthly_{start_year}_{end_year}_mean.{month}.nc').
+port_uri_template(14, 'file:inputs/narr_apcp_rescaled_monthly/apcp_monthly_{start_year}_{end_year}_mean.{month}.nc').
+port_uri_template(26, 'file:outputs/SYNMAP_PRESENTVEG_C3Grass_RelaFrac_NA_v2.0.nc').
+port_uri_template(32, 'file:outputs/SYNMAP_PRESENTVEG_C4Grass_RelaFrac_NA_v2.0.nc').
+port_uri_template(38, 'file:outputs/SYNMAP_PRESENTVEG_Grass_Fraction_NA_v2.0.nc').
 
 % FACT: has_in_port(block_id, port_id).
 has_in_port(1, 1).
@@ -253,10 +253,18 @@ outflow_connects_to_channel(5, 28).
 outflow_connects_to_channel(6, 29).
 
 % FACT: uri_variable(uri_variable_id, variable_name, port_id).
-uri_variable(1, 'month', 2).
-uri_variable(2, 'month', 3).
-uri_variable(3, 'month', 12).
-uri_variable(4, 'month', 14).
+uri_variable(1, 'start_year', 2).
+uri_variable(2, 'end_year', 2).
+uri_variable(3, 'month', 2).
+uri_variable(4, 'start_year', 3).
+uri_variable(5, 'end_year', 3).
+uri_variable(6, 'month', 3).
+uri_variable(7, 'start_year', 12).
+uri_variable(8, 'end_year', 12).
+uri_variable(9, 'month', 12).
+uri_variable(10, 'start_year', 14).
+uri_variable(11, 'end_year', 14).
+uri_variable(12, 'month', 14).
 
 % FACT: log_template(log_template_id, port_id, entry_template, log_annotation_id).
 

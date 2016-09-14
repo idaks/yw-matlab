@@ -1,12 +1,12 @@
 % @BEGIN C3_C4_map_present_NA
 %
-% @IN SYNMAP_land_cover_map_data @URI inputs/land_cover/SYNMAP_NA_QD.nc
-% @IN mean_airtemp @URI file:inputs/narr_air.2m_monthly/air.2m_monthly_{start_year}_{end_year}_mean.{month}.nc
-% @IN mean_precip @URI file:inputs/narr_apcp_rescaled_monthly/apcp_monthly_{start_year}_{end_year}_mean.{month}.nc
+% @in SYNMAP_land_cover_map_data @URI inputs/land_cover/SYNMAP_NA_QD.nc
+% @in mean_airtemp @URI file:inputs/narr_air.2m_monthly/air.2m_monthly_{start_year}_{end_year}_mean.{month}.nc
+% @in mean_precip @URI file:inputs/narr_apcp_rescaled_monthly/apcp_monthly_{start_year}_{end_year}_mean.{month}.nc
 
-% @OUT C3_fraction_data @URI file:outputs/SYNMAP_PRESENTVEG_C3Grass_RelaFrac_NA_v2.0.nc
-% @OUT C4_fraction_data @URI file:outputs/SYNMAP_PRESENTVEG_C4Grass_RelaFrac_NA_v2.0.nc
-% @OUT Grass_fraction_data @URI file:outputs/SYNMAP_PRESENTVEG_Grass_Fraction_NA_v2.0.nc
+% @out C3_fraction_data @URI file:outputs/SYNMAP_PRESENTVEG_C3Grass_RelaFrac_NA_v2.0.nc
+% @out C4_fraction_data @URI file:outputs/SYNMAP_PRESENTVEG_C4Grass_RelaFrac_NA_v2.0.nc
+% @out Grass_fraction_data @URI file:outputs/SYNMAP_PRESENTVEG_Grass_Fraction_NA_v2.0.nc
 
 % clear all
 ncols=480;
@@ -15,11 +15,11 @@ nodatavalue = -999.0;
 
 %% Load input: SYNMAP land cover classification map; also read coordinate variables to re-use them later
 % @BEGIN fetch_SYNMAP_land_cover_map_variable
-% @IN SYNMAP_land_cover_map_data @URI inputs/land_cover/SYNMAP_NA_QD.nc
-% @OUT lon @AS lon_variable
-% @OUT lat @AS lat_variable
-% @OUT lon_bnds @AS lon_bnds_variable
-% @OUT lat_bnds @AS lat_bnds_variable
+% @in SYNMAP_land_cover_map_data @URI inputs/land_cover/SYNMAP_NA_QD.nc
+% @out lon @AS lon_variable
+% @out lat @AS lat_variable
+% @out lon_bnds @AS lon_bnds_variable
+% @out lat_bnds @AS lat_bnds_variable
 
 grass_type=[19,20,21,22,23,24,25,26,27,38,41,42,43];
 sncid=netcdf.open('inputs/land_cover/SYNMAP_NA_QD.nc', 'NC_NOWRITE');
@@ -43,8 +43,8 @@ netcdf.close(sncid)
 
 %% Load input: long-term monthly mean air temperature data
 % @BEGIN fetch_monthly_mean_air_temperature_data
-% @IN mean_airtemp @URI file:inputs/narr_air.2m_monthly/air.2m_monthly_{start_year}_{end_year}_mean.{month}.nc
-% @OUT Tair @AS Tair_Matrix
+% @in mean_airtemp @URI file:inputs/narr_air.2m_monthly/air.2m_monthly_{start_year}_{end_year}_mean.{month}.nc
+% @out Tair @AS Tair_Matrix
 Tair=zeros(ncols,nrows,12);
 for m=1:12
     tncid=netcdf.open(strcat('inputs/narr_air.2m_monthly/air.2m_monthly_2000_2010_mean.',num2str(m),'.nc'), 'NC_NOWRITE');
@@ -57,8 +57,8 @@ end
 
 %% Load input: long-term monthly mean precipitation data
 % @BEGIN fetch_monthly_mean_precipitation_data
-% @IN mean_precip @URI file:inputs/narr_apcp_rescaled_monthly/apcp_monthly_{start_year}_{end_year}_mean.{month}.nc
-% @OUT Rain @AS Rain_Matrix
+% @in mean_precip @URI file:inputs/narr_apcp_rescaled_monthly/apcp_monthly_{start_year}_{end_year}_mean.{month}.nc
+% @out Rain @AS Rain_Matrix
 Rain=zeros(ncols,nrows,12);
 for m=1:12
     rncid=netcdf.open(strcat('inputs/narr_apcp_rescaled_monthly/apcp_monthly_2000_2010_mean.',num2str(m),'.nc'), 'NC_NOWRITE');
@@ -70,7 +70,7 @@ end
 
 %% Initialize Grass Matrix
 % @BEGIN initialize_Grass_Matrix
-% @OUT Grass @AS Grass_variable
+% @out Grass @AS Grass_variable
 Grass=zeros(ncols,nrows);
 for i=1:ncols
     for j=1:nrows
@@ -82,10 +82,10 @@ end
 %% Algorithm 1: method used in MstMIP
 %  Examine the type of each pixel to see if it includes grass
 % @BEGIN examine_pixels_for_grass
-% @IN Tair @AS Tair_Matrix
-% @IN Rain @AS Rain_Matrix
-% @OUT C3 @AS C3_Data
-% @OUT C4 @AS C4_Data
+% @in Tair @AS Tair_Matrix
+% @in Rain @AS Rain_Matrix
+% @out C3 @AS C3_Data
+% @out C4 @AS C4_Data
 
 C3=ones(ncols, nrows)*(-999.0);
 C4=ones(ncols, nrows)*(-999.0);
@@ -167,12 +167,12 @@ end
 %% Output the netcdf file for C3 fraction
 %  Reuse longitude, latitude, and boundary variables from land cover input file
 % @BEGIN generate_netcdf_file_for_C3_fraction
-% @IN lon_variable
-% @IN lat_variable
-% @IN lon_bnds_variable
-% @IN lat_bnds_variable
-% @IN C3_Data
-% @OUT C3_fraction_data @URI file:outputs/SYNMAP_PRESENTVEG_C3Grass_RelaFrac_NA_v2.0.nc
+% @in lon_variable
+% @in lat_variable
+% @in lon_bnds_variable
+% @in lat_bnds_variable
+% @in C3_Data
+% @out C3_fraction_data @URI file:outputs/SYNMAP_PRESENTVEG_C3Grass_RelaFrac_NA_v2.0.nc
 moncid=netcdf.create('outputs/SYNMAP_PRESENTVEG_C3Grass_RelaFrac_NA_v2.0.nc', 'NC_CLOBBER');% create netCDF dataset (filename,mode)
 
 mdid_lon = netcdf.defDim(moncid, 'lon', ncols);
@@ -228,12 +228,12 @@ netcdf.close(moncid)
 %% Output the netcdf file for C4 fraction
 % Reuse longitude, latitude, and boundary variables from land cover input file
 % @BEGIN generate_netcdf_file_for_C4_fraction
-% @IN lon_variable
-% @IN lat_variable
-% @IN lon_bnds_variable
-% @IN lat_bnds_variable
-% @IN C4_Data
-% @OUT C4_fraction_data @URI file:outputs/SYNMAP_PRESENTVEG_C4Grass_RelaFrac_NA_v2.0.nc
+% @in lon_variable
+% @in lat_variable
+% @in lon_bnds_variable
+% @in lat_bnds_variable
+% @in C4_Data
+% @out C4_fraction_data @URI file:outputs/SYNMAP_PRESENTVEG_C4Grass_RelaFrac_NA_v2.0.nc
 moncid=netcdf.create('outputs/SYNMAP_PRESENTVEG_C4Grass_RelaFrac_NA_v2.0.nc', 'NC_CLOBBER');% create netCDF dataset (filename,mode)
 
 mdid_lon = netcdf.defDim(moncid, 'lon', ncols);
@@ -289,12 +289,12 @@ netcdf.close(moncid)
 %% Output the netcdf file for Grass fraction
 % Reuse longitude, latitude, and boundary variables from land cover input file
 % @BEGIN generate_netcdf_file_for_Grass_fraction
-% @IN lon_variable
-% @IN lat_variable
-% @IN lon_bnds_variable
-% @IN lat_bnds_variable
-% @IN Grass_variable
-% @OUT Grass_fraction_data @URI file:outputs/SYNMAP_PRESENTVEG_Grass_Fraction_NA_v2.0.nc
+% @in lon_variable
+% @in lat_variable
+% @in lon_bnds_variable
+% @in lat_bnds_variable
+% @in Grass_variable
+% @out Grass_fraction_data @URI file:outputs/SYNMAP_PRESENTVEG_Grass_Fraction_NA_v2.0.nc
 moncid=netcdf.create('outputs/SYNMAP_PRESENTVEG_Grass_Fraction_NA_v2.0.nc', 'NC_CLOBBER');% create netCDF dataset (filename,mode)
 
 mdid_lon = netcdf.defDim(moncid, 'lon', ncols);

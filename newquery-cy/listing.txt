@@ -1,41 +1,41 @@
-% @begin C3_C4_map_present_NA
-@in mstmip_SYNMAP_NA_QD.nc @as SYNMAP_land_cover_map_data
-@in mean_airtemp @uri file:c3c4input/monthly/2000-2010/air.2m_monthly_2000_2010.mean.{month}.nc
-@in mean_precip @uri file:c3c4input/monthly/2000-2010/apcp_monthly_2000_2010_mean.{month}.nc
-@out C3_fraction_data @uri file:mstmip_SYNMAP_PRESENTVEG_C3Grass_RelaFrac_NA_v2.0.nc
-@out C4_fraction_data @uri file:mstmip_SYNMAP_PRESENTVEG_C4Grass_RelaFrac_NA_v2.0.nc
-@out Grass_fraction_data @uri file:mstmip_SYNMAP_PRESENTVEG_Grass_Fraction_NA_v2.0.nc
+@BEGIN C3_C4_map_present_NA
+% @in SYNMAP_land_cover_map_data @URI inputs/land_cover/SYNMAP_NA_QD.nc
+@in mean_airtemp @URI file:inputs/narr_air.2m_monthly/air.2m_monthly_{start_year}_{end_year}_mean.{month}.nc
+@in mean_precip @URI file:inputs/narr_apcp_rescaled_monthly/apcp_monthly_{start_year}_{end_year}_mean.{month}.nc
+@out C3_fraction_data @URI file:outputs/SYNMAP_PRESENTVEG_C3Grass_RelaFrac_NA_v2.0.nc
+@out C4_fraction_data @URI file:outputs/SYNMAP_PRESENTVEG_C4Grass_RelaFrac_NA_v2.0.nc
+@out Grass_fraction_data @URI file:outputs/SYNMAP_PRESENTVEG_Grass_Fraction_NA_v2.0.nc
 clear all
-% @begin fetch_SYNMAP_land_cover_map_variable
-@in mstmip_SYNMAP_NA_QD.nc @as SYNMAP_land_cover_map_data
-@out lon @as lon_variable
-@out lat @as lat_variable
-@out lon_bnds @as lon_bnds_variable
-@out lat_bnds @as lat_bnds_variable
 % Load input: SYNMAP land cover classification map; also read coordinate variables to re-use them later
-% @end fetch_SYNMAP_land_cover_map_variable
-% @begin fetch_monthly_mean_air_temperature_data
-@in mean_airtemp @uri file:c3c4input/monthly/2000-2010/air.2m_monthly_2000_2010.mean.{month}.nc
-@out Tair @as Tair_Matrix
+@BEGIN fetch_SYNMAP_land_cover_map_variable
+@in SYNMAP_land_cover_map_data @URI inputs/land_cover/SYNMAP_NA_QD.nc
+@out lon @AS lon_variable
+@out lat @AS lat_variable
+@out lon_bnds @AS lon_bnds_variable
+@out lat_bnds @AS lat_bnds_variable
+@END fetch_SYNMAP_land_cover_map_variable
 % Load input: long-term monthly mean air temperature data
-% @end fetch_monthly_mean_air_temperature_data
-% @begin fetch_monthly_mean_precipitation_data
-@in mean_precip @uri file:c3c4input/monthly/2000-2010/apcp_monthly_2000_2010_mean.{month}.nc
-@out Rain @as Rain_Matrix
+@BEGIN fetch_monthly_mean_air_temperature_data
+@in mean_airtemp @URI file:inputs/narr_air.2m_monthly/air.2m_monthly_{start_year}_{end_year}_mean.{month}.nc
+@out Tair @AS Tair_Matrix
+@END fetch_monthly_mean_air_temperature_data
 % Load input: long-term monthly mean precipitation data
-% @end fetch_monthly_mean_precipitation_data
-% @begin initialize_Grass_Matrix
-@out Grass @as Grass_variable
+@BEGIN fetch_monthly_mean_precipitation_data
+@in mean_precip @URI file:inputs/narr_apcp_rescaled_monthly/apcp_monthly_{start_year}_{end_year}_mean.{month}.nc
+@out Rain @AS Rain_Matrix
+@END fetch_monthly_mean_precipitation_data
 % Initialize Grass Matrix
-% @end initialize_Grass_Matrix
-% @begin examine_pixels_for_grass
-@in Tair @as Tair_Matrix
-@in Rain @as Rain_Matrix
-@out C3 @as C3_Data
-@out C4 @as C4_Data
+@BEGIN initialize_Grass_Matrix
+@out Grass @AS Grass_variable
+@END initialize_Grass_Matrix
 % Algorithm 1: method used in MstMIP
-examine the type of each pixel to see if it includes grass
-% @end examine_pixels_for_grass
+Examine the type of each pixel to see if it includes grass
+@BEGIN examine_pixels_for_grass
+@in Tair @AS Tair_Matrix
+@in Rain @AS Rain_Matrix
+@out C3 @AS C3_Data
+@out C4 @AS C4_Data
+@END examine_pixels_for_grass
 % Algorithm 2: a more complicated method
 examine the type of each pixel to see if it includes grass
 C3=ones(ncols, nrows)*(-999.0);
@@ -73,15 +73,15 @@ C3(i,j)=frac_c3;
 C4(i,j)=frac_c4;
 end
 end
-% @begin generate_netcdf_file_for_C3_fraction
+% Output the netcdf file for C3 fraction
+Reuse longitude, latitude, and boundary variables from land cover input file
+@BEGIN generate_netcdf_file_for_C3_fraction
 @in lon_variable
 @in lat_variable
 @in lon_bnds_variable
 @in lat_bnds_variable
 @in C3_Data
-@out C3_fraction_data @uri file:mstmip_SYNMAP_PRESENTVEG_C3Grass_RelaFrac_NA_v2.0.nc
-% Output the netcdf file for C3 fraction
-reuse longitude, latitude, and boundary variables from land cover input file
+@out C3_fraction_data @URI file:outputs/SYNMAP_PRESENTVEG_C3Grass_RelaFrac_NA_v2.0.nc
 create netCDF dataset (filename,mode)
 netcdf.putAtt(moncid, mvid_data, 'units', ovunits);
 netcdf.putAtt(moncid, mvid_data, 'cell_methods', ocell_methods);
@@ -89,16 +89,16 @@ netcdf.putAtt(moncid, mvid_data, '_FillValue', nodatavalue);
 put global attributes
 Enter into data mode to write data
 Put aux data in long term mean data
-% @end generate_netcdf_file_for_C3_fraction
-% @begin generate_netcdf_file_for_C4_fraction
+@END generate_netcdf_file_for_C3_fraction
+% Output the netcdf file for C4 fraction
+Reuse longitude, latitude, and boundary variables from land cover input file
+@BEGIN generate_netcdf_file_for_C4_fraction
 @in lon_variable
 @in lat_variable
 @in lon_bnds_variable
 @in lat_bnds_variable
 @in C4_Data
-@out C4_fraction_data @uri file:mstmip_SYNMAP_PRESENTVEG_C4Grass_RelaFrac_NA_v2.0.nc
-% Output the netcdf file for C4 fraction
-reuse longitude, latitude, and boundary variables from land cover input file
+@out C4_fraction_data @URI file:outputs/SYNMAP_PRESENTVEG_C4Grass_RelaFrac_NA_v2.0.nc
 create netCDF dataset (filename,mode)
 netcdf.putAtt(moncid, mvid_data, 'units', ovunits);
 netcdf.putAtt(moncid, mvid_data, 'cell_methods', ocell_methods);
@@ -106,16 +106,16 @@ netcdf.putAtt(moncid, mvid_data, '_FillValue', nodatavalue);
 put global attributes
 Enter into data mode to write data
 Put aux data in long term mean data
-% @end generate_netcdf_file_for_C4_fraction
-% @begin generate_netcdf_file_for_Grass_fraction
+@END generate_netcdf_file_for_C4_fraction
+% Output the netcdf file for Grass fraction
+Reuse longitude, latitude, and boundary variables from land cover input file
+@BEGIN generate_netcdf_file_for_Grass_fraction
 @in lon_variable
 @in lat_variable
 @in lon_bnds_variable
 @in lat_bnds_variable
 @in Grass_variable
-@out Grass_fraction_data @uri file:mstmip_SYNMAP_PRESENTVEG_Grass_Fraction_NA_v2.0.nc
-% Output the netcdf file for Grass fraction
-reuse longitude, latitude, and boundary variables from land cover input file
+@out Grass_fraction_data @URI file:outputs/SYNMAP_PRESENTVEG_Grass_Fraction_NA_v2.0.nc
 create netCDF dataset (filename,mode)
 variable name is 'crs'? type 'char'
 netcdf.putAtt(moncid, mvid_data, 'units', ovunits);
@@ -124,5 +124,5 @@ netcdf.putAtt(moncid, mvid_data, '_FillValue', nodatavalue);
 put global attributes
 Enter into data mode to write data
 Put aux data in long term mean data
-% @end generate_netcdf_file_for_Grass_fraction
-% @end C3_C4_map_present_NA
+@END generate_netcdf_file_for_Grass_fraction
+@END C3_C4_map_present_NA
